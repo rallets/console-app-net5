@@ -1,6 +1,6 @@
 # .Net 5 console application demo
 
-A console app built using .NET 5 with support to Microsoft best practices to show how to setup:
+A console app built using .NET 5 with support to Microsoft DI best practices to show how to setup:
 
 - Multiple environments,
 - Configuration values using the `Options pattern`,
@@ -8,7 +8,8 @@ A console app built using .NET 5 with support to Microsoft best practices to sho
 - Usersecrets,
 - Azure KeyVault,
 - Azure Application Insight,
-- ConsoleHostedService,
+- TelemetryClient,
+- HostedService,
 - HttpClientFactory,
 
 ## Setup
