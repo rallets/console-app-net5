@@ -1,5 +1,7 @@
 # .Net Core 5 console application demo
 
+Github repo: [https://github.com/rallets/console-app-net5/](https://github.com/rallets/console-app-net5/)
+
 A console app built using .NET Core 5 with support to Microsoft DI best practices to show how to setup:
 
 - Multiple environments,
