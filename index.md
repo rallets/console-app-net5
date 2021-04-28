@@ -1,37 +1,76 @@
-## Welcome to GitHub Pages
+# .Net Core 5 console application demo
 
-You can use the [editor on GitHub](https://github.com/rallets/console-app-net5/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+A console app built using .NET Core 5 with support to Microsoft DI best practices to show how to setup:
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+- Multiple environments,
+- Configuration values using the `Options pattern`,
+- Appsettings,
+- Usersecrets,
+- Azure KeyVault,
+- Azure Application Insight,
+- TelemetryClient,
+- HostedService,
+- HttpClientFactory,
 
-### Markdown
+## Setup
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### Environments
 
-```markdown
-Syntax highlighted code block
+It is possible to configure multiple environments (Development, Test, Production, etc) in different ways.
+Then it's possible to run with a specific environment configuration, as example:
 
-# Header 1
-## Header 2
-### Header 3
+1. `Project` >  `Properties` > `Debug` > `Environment variables` > Name: `DOTNET_ENVIRONMENT`, Value: `Development`
+2. `dotnet run --environment=Development`
+3. `Properties` > `launchSettings.json`
 
-- Bulleted
-- List
+Hence you can create different `appsettings.ENV.json` files, like `appsettings.development.json`.
 
-1. Numbered
-2. List
+NB. `context.HostingEnvironment.IsDevelopment()` requires an environment called `Development` (and not just `Dev`)
 
-**Bold** and _Italic_ and `Code` text
+The configuration files can contain only partial object, and can override eachother, following the order:
 
-[Link](url) and ![Image](src)
-```
+- `appsettings.json`
+- `appsettings.ENV.json`
+- `secrets.json`
+- Azure KeyVault
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+Your custom configuration properties (Options pattern) should be placed inside objects, and not added directly to the AppConfig class.
+In this way it's possible to inject these classes during DI.
 
-### Jekyll Themes
+### User secrets
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/rallets/console-app-net5/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+It's possible to store sensible configuration in `secrets.json` (added easily via Visual Studio) and in this configuration it's mandatory.
 
-### Support or Contact
+### Azure KeyVault
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Configure in your subscription an Azure KeyVault and copy the KeyVault uri in the config file:
+
+`KeyVaultUri: "https://your-key-vault-name.vault.azure.net/"`
+
+### Azure Application Insight
+
+Configure in your subscription an Azure Application Insight and copy the InstrumentationKey (a GUID) in the config file:
+
+`InstrumentationKey: "your application insight guid"`.
+
+We will also configure a `TelemetryClient`, but be aware that `Flush()` is not a blocking operation and it doesn't guarantee that the logs are sent to the Azure backplane. That means we need to add a Sleep as suggested from the docs, waiting for a proper fix in the AI package.
+NB. There is not an ufficial sleep-time suggested, so tweak this value as you need.
+
+### Configure logging
+
+The logging level can be configured in the config files.
+
+### Dumping the built configuration
+
+It's possible, just for debugging purposes, to dump out the configuration tree.
+NB. do not use in production, neither expose publicly, as it is a security risk.
+
+## Dependency Injection (DI)
+
+The goal of this demo/template is to show how it's possible to support DI for every dependency. One example is `IHttpClientFactory` that allows to build `HttpClients` in a memory-safe way, adds many features (like named instances), is very flexible, and can be configured in many ways.
+
+## HostedService
+
+The staring point of the console is a `HostedService`, a Singleton that the framework will manage for us, and will take care of calling `StartAsync` and `StopAsync` in the right moment in the application lifecycle, allowing also gracefully shutdowns.
+
+Inside the ConsoleHostedService it's possible to use services with a different scope, like a `Transient` or a `Scoped` service (es. `EntityFramework`), using `IServiceScopeFactory`.
