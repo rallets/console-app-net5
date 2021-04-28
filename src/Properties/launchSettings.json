@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ConsoleAppNet5": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
