@@ -1,6 +1,6 @@
-# .Net 5 console application demo
+# .Net Core 5 console application demo
 
-A console app built using .NET 5 with support to Microsoft DI best practices to show how to setup:
+A console app built using .NET Core 5 with support to Microsoft DI best practices to show how to setup:
 
 - Multiple environments,
 - Configuration values using the `Options pattern`,
@@ -35,7 +35,7 @@ The configuration files can contain only partial object, and can override eachot
 - Azure KeyVault
 
 Your custom configuration properties (Options pattern) should be placed inside objects, and not added directly to the AppConfig class.
-In this wy it's possible to inject these classes during DI.
+In this way it's possible to inject these classes during DI.
 
 ### User secrets
 
